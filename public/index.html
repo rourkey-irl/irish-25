@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Irish 25</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="auth-container">
+    <h1>🃏 Irish 25</h1>
+    <p class="subtitle">Ireland's national card game</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('login')">Login</button>
+      <button class="tab" onclick="showTab('register')">Register</button>
+    </div>
+
+    <div id="login-form">
+      <input type="text" id="login-username" placeholder="Username" />
+      <input type="password" id="login-password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+    </div>
+
+    <div id="register-form" style="display:none">
+      <input type="text" id="reg-username" placeholder="Choose a username" />
+      <input type="password" id="reg-password" placeholder="Choose a password (6+ chars)" />
+      <button onclick="register()">Create account</button>
+    </div>
+
+    <p id="auth-error" class="error"></p>
+
+    <div id="leaderboard" style="margin-top:2rem">
+      <h2>Leaderboard</h2>
+      <table id="lb-table">
+        <thead><tr><th>Player</th><th>Wins</th><th>Losses</th><th>Tricks</th></tr></thead>
+        <tbody id="lb-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function showTab(tab) {
+      document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    async function login() {
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (!res.ok) return showError(data.error);
+      window.location.href = '/game.html';
+    }
+
+    async function register() {
+      const username = document.getElementById('reg-username').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (!res.ok) return showError(data.error);
+      window.location.href = '/game.html';
+    }
+
+    function showError(msg) {
+      document.getElementById('auth-error').textContent = msg;
+    }
+
+    // Load leaderboard
+    fetch('/api/leaderboard').then(r => r.json()).then(rows => {
+      const tbody = document.getElementById('lb-body');
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#999">No games played yet</td></tr>';
+        return;
+      }
+      tbody.innerHTML = rows.map(r =>
+        `<tr><td>${r.username}</td><td>${r.wins}</td><td>${r.losses}</td><td>${r.tricks_won}</td></tr>`
+      ).join('');
+    });
+
+    // Redirect if already logged in
+    fetch('/api/me').then(r => r.json()).then(data => {
+      if (data.user) window.location.href = '/game.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Irish 25</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div id="app">
+
+    <!-- Top bar -->
+    <div id="topbar">
+      <span id="welcome-msg"></span>
+      <div id="game-info">
+        <span id="trump-display"></span>
+        <span id="pool-display"></span>
+        <span id="round-display"></span>
+      </div>
+      <button id="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Opponent seats (up to 5 AI players) -->
+    <div id="opponents">
+      <div class="opponent-seat" id="seat-1"></div>
+      <div class="opponent-seat" id="seat-2"></div>
+      <div class="opponent-seat" id="seat-3"></div>
+      <div class="opponent-seat" id="seat-4"></div>
+      <div class="opponent-seat" id="seat-5"></div>
+    </div>
+
+    <!-- Centre play area -->
+    <div id="play-area">
+      <div id="trick-area"></div>
+      <div id="message-box"></div>
+    </div>
+
+    <!-- Player hand -->
+    <div id="player-area">
+      <div id="player-info">
+        <span id="player-name-display"></span>
+        <span id="player-score-display"></span>
+        <span id="player-tricks-display"></span>
+      </div>
+      <div id="player-hand"></div>
+      <div id="action-buttons">
+        <button id="btn-start" onclick="startGame()">Deal new game</button>
+        <button id="btn-rob" onclick="showRobUI()" style="display:none">Rob the pack</button>
+        <button id="btn-skip-rob" onclick="skipRob()" style="display:none">Skip rob</button>
+        <button id="btn-next-round" onclick="nextRound()" style="display:none">Next round</button>
+      </div>
+    </div>
+
+    <!-- Score panel -->
+    <div id="score-panel">
+      <h3>Scores</h3>
+      <div id="score-list"></div>
+    </div>
+
+  </div>
+
+  <script src="game.js"></script>
+  <script src="ai.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>

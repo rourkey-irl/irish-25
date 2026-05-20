@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head><title>Card engine test</title></head>
+<body>
+<pre id="out"></pre>
+<script src="game.js"></script>
+<script>
+  const log = [];
+
+  // Test 1: trump ranking
+  const trumpSuit = 'hearts';
+  const five = { suit: 'hearts', value: '5' };
+  const jack = { suit: 'hearts', value: 'J' };
+  const aceH = { suit: 'hearts', value: 'A' };
+  const king = { suit: 'hearts', value: 'K' };
+
+  log.push('--- Trump ranking (hearts) ---');
+  log.push(`5♥ rank: ${Game.rankCard(five, trumpSuit)} (expect 100)`);
+  log.push(`J♥ rank: ${Game.rankCard(jack, trumpSuit)} (expect 99)`);
+  log.push(`A♥ rank: ${Game.rankCard(aceH, trumpSuit)} (expect 98)`);
+  log.push(`K♥ rank: ${Game.rankCard(king, trumpSuit)} (expect 80)`);
+
+  // Test 2: trick winner
+  log.push('\n--- Trick winner ---');
+  const trick = [
+    { card: { suit: 'clubs', value: 'K' }, playerIndex: 0 },
+    { card: { suit: 'hearts', value: '2' }, playerIndex: 1 },
+    { card: { suit: 'clubs', value: 'A' }, playerIndex: 2 },
+  ];
+  const winner = Game.trickWinner(trick, 'hearts');
+  log.push(`Winner: player ${winner.playerIndex} with ${Game.cardLabel(winner.card)} (expect player 1 — 2♥ is a trump)`);
+
+  // Test 3: deal a game
+  log.push('\n--- Deal ---');
+  let state = Game.createGameState(['You','AI 1','AI 2','AI 3']);
+  state = Game.dealHands(state);
+  log.push(`Trump: ${Game.cardLabel(state.trumpCard)}`);
+  state.players.forEach(p => {
+    log.push(`${p.name}: ${p.hand.map(Game.cardLabel).join(' ')}`);
+  });
+
+  document.getElementById('out').textContent = log.join('\n');
+</script>
+</body>
+</html>
