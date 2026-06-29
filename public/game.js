@@ -160,10 +160,13 @@ function legalCards(hand, ledCard, trumpSuit) {
     // All trumps are top trumps higher than led — can renege
     return hand;
   } else {
-    // Non-trump led — follow suit or trump, discard only if can't follow
+    // Non-trump led — may follow suit or trump; discard only if void in both
     const suitInHand = hand.filter(c => c.suit === ledSuit && !isTrump(c, trumpSuit));
-    if (suitInHand.length > 0) return suitInHand;
-    return hand; // can't follow suit — play anything
+    if (suitInHand.length > 0) {
+      const trumpsInHand = hand.filter(c => isTrump(c, trumpSuit));
+      return [...suitInHand, ...trumpsInHand];
+    }
+    return hand; // void in led suit — play anything
   }
 }
 
