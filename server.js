@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'irish25-secret-key',
+  secret: process.env.SESSION_SECRET || 'irish25-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 24 hours
@@ -92,4 +92,5 @@ app.post('/api/result', requireAuth, (req, res) => {
 });
 
 
-app.listen(3000, () => console.log('Irish 25 running at http://localhost:3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Irish 25 running at http://localhost:${PORT}`));
