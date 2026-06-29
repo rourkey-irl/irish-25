@@ -149,7 +149,7 @@ function handleScoring() {
     msg = `${state.players[poolWinner].name} wins the round with ${state.players[poolWinner].tricksWon} tricks!`;
     if (state.players[poolWinner].tricksWon === 5) msg += ' 🏆 All five tricks!';
   } else {
-    msg = 'Spoiled! No winner — pool carries forward.';
+    msg = 'Spoiled! No one won 3 tricks.';
   }
   setMessage(msg);
   renderScores();
@@ -319,6 +319,19 @@ function cardHTML(card, disabled, isTrump, isWinner, playerName, clickable, high
       ${nameTag}
     </div>`;
 }
+
+function renderScores() {
+  if (!state) return;
+  const maxScore = Math.max(...state.players.map(p => p.score));
+  document.getElementById('score-list').innerHTML = state.players.map(p => `
+    <div class="score-row${p.score === maxScore && maxScore > 0 ? ' leader' : ''}">
+      <span>${p.isHuman ? '👤 ' : ''}${p.name}</span>
+      <span>${p.score}</span>
+    </div>
+  `).join('');
+}
+
+function renderPool() {}
 
 // ── Helpers ───────────────────────────────────────────────
 

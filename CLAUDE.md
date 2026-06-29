@@ -36,5 +36,5 @@ Auth (`index.html`) and the game board (`game.html`) are separate pages; `ui.js`
 
 - **Trump order** (high→low): 5 of trumps → J of trumps → A♥ → A of trumps → colour-order remainder. A♥ is *always* a trump regardless of the trump suit.
 - **Reneging**: a player holding the 5, J of trumps, or A♥ may refuse to follow a trump lead *only if* their card outranks the card led. Implemented in `canRenege()` and enforced in `legalCards()`.
-- **Scoring**: 5 pts per trick won; winner of ≥3 tricks takes the pool. Pool carries forward on a spoil (no one wins 3). First to 25 pts wins the game.
+- **Scoring**: 5 pts awarded to the trick winner immediately after each trick. Winner check happens after every trick — first player to reach 25 pts wins the game, which can happen mid-round.
 - **Robbing**: holder of the A of trumps may swap it for the turned-up trump card before play begins; `whoCanRob()` identifies who, `robPack()` executes it.
