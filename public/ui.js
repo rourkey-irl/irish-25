@@ -120,23 +120,19 @@ function aiTurn() {
 }
 
 function handleAfterPlay() {
-  if (state.phase === 'scoring') {
-    handleScoring();
-    return;
-  }
-  if (state.phase === 'gameover') {
-    handleGameOver();
-    return;
-  }
-  // Trick just completed — pause so player can see it
+  // Always pause on a completed trick so the player can see who won and with what card
   if (state.currentTrick.length === 0 && state.trickHistory.length > 0) {
     const last = state.trickHistory[state.trickHistory.length - 1];
     const winnerName = state.players[last.winner].name;
-    setMessage(`${winnerName} wins the trick!`);
+    const winningEntry = last.trick.find(t => t.playerIndex === last.winner);
+    const winningCard = Game.cardLabel(winningEntry.card);
+    setMessage(`${winnerName} wins with ${winningCard}!`);
     setTimeout(() => {
+      if (state.phase === 'gameover') { handleGameOver(); return; }
+      if (state.phase === 'scoring') { handleScoring(); return; }
       renderAll();
       if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
-    }, 1200);
+    }, 500);
     return;
   }
   if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
