@@ -139,41 +139,25 @@ function handleAfterPlay() {
 }
 
 function handleScoring() {
-  let msg = '';
-  let poolWinner = state.players.findIndex(p => p.tricksWon >= 3);
-  if (poolWinner >= 0) {
-    msg = `${state.players[poolWinner].name} wins the round with ${state.players[poolWinner].tricksWon} tricks!`;
-    if (state.players[poolWinner].tricksWon === 5) msg += ' 🏆 All five tricks!';
-  } else {
-    msg = 'Spoiled! No one won 3 tricks.';
-  }
+  const mostTricks = Math.max(...state.players.map(p => p.tricksWon));
+  const roundWinner = state.players.find(p => p.tricksWon === mostTricks);
+  let msg = `${roundWinner.name} took the most tricks this round (${mostTricks})!`;
+  if (mostTricks === 5) msg += ' 🏆 All five tricks!';
   setMessage(msg);
   renderScores();
-
-  // Save result to server if human was involved
-  if (poolWinner === 0) {
-    fetch('/api/result', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ result: 'win', tricks: state.players[0].tricksWon })
-    });
-  } else if (poolWinner > 0) {
-    fetch('/api/result', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ result: 'loss', tricks: state.players[0].tricksWon })
-    });
-  }
-
-  if (state.phase !== 'gameover') {
-    document.getElementById('btn-next-round').style.display = 'inline-block';
-  }
+  document.getElementById('btn-next-round').style.display = 'inline-block';
 }
 
 function handleGameOver() {
   renderAll();
   setMessage(`🏆 ${state.winner} wins the game with 25 points!`);
   document.getElementById('btn-start').textContent = 'Play again';
+  const humanWon = state.winner === state.players[0].name;
+  fetch('/api/result', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ result: humanWon ? 'win' : 'loss', tricks: state.players[0].tricksWon })
+  });
 }
 
 // ── Rendering ─────────────────────────────────────────────
