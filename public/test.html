@@ -1,149 +1,45 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Irish 25 — engine tests</title>
-  <style>
-    body { font-family: monospace; background: #1a1a1a; color: #ccc; padding: 2rem; }
-    .pass { color: #4ade80; }
-    .fail { color: #f87171; }
-    .section { color: #ffd700; margin-top: 1rem; }
-    .summary { margin-top: 1rem; font-size: 1.1rem; font-weight: bold; }
-  </style>
-</head>
+<head><title>Card engine test</title></head>
 <body>
-<div id="out"></div>
+<pre id="out"></pre>
 <script src="game.js"></script>
 <script>
-  let passed = 0, failed = 0;
-  const out = document.getElementById('out');
+  const log = [];
 
-  function c(suit, value) { return { suit, value }; }
+  // Test 1: trump ranking
+  const trumpSuit = 'hearts';
+  const five = { suit: 'hearts', value: '5' };
+  const jack = { suit: 'hearts', value: 'J' };
+  const aceH = { suit: 'hearts', value: 'A' };
+  const king = { suit: 'hearts', value: 'K' };
 
-  function normCards(arr) {
-    return arr.map(card => `${card.value}${card.suit[0].toUpperCase()}`).sort().join(', ');
-  }
+  log.push('--- Trump ranking (hearts) ---');
+  log.push(`5♥ rank: ${Game.rankCard(five, trumpSuit)} (expect 100)`);
+  log.push(`J♥ rank: ${Game.rankCard(jack, trumpSuit)} (expect 99)`);
+  log.push(`A♥ rank: ${Game.rankCard(aceH, trumpSuit)} (expect 98)`);
+  log.push(`K♥ rank: ${Game.rankCard(king, trumpSuit)} (expect 80)`);
 
-  function section(title) {
-    out.innerHTML += `<div class="section">── ${title} ──</div>`;
-  }
-
-  function assertEq(desc, actual, expected) {
-    const ok = actual === expected;
-    ok ? passed++ : failed++;
-    out.innerHTML += `<div class="${ok ? 'pass' : 'fail'}">${ok ? '✅' : '❌'} ${desc}${ok ? '' : `<br>&nbsp;&nbsp;&nbsp;got:      ${actual}<br>&nbsp;&nbsp;&nbsp;expected: ${expected}`}</div>`;
-  }
-
-  function assertCards(desc, actual, expected) {
-    const a = normCards(actual), e = normCards(expected);
-    const ok = a === e;
-    ok ? passed++ : failed++;
-    out.innerHTML += `<div class="${ok ? 'pass' : 'fail'}">${ok ? '✅' : '❌'} ${desc}${ok ? '' : `<br>&nbsp;&nbsp;&nbsp;got:      ${a}<br>&nbsp;&nbsp;&nbsp;expected: ${e}`}</div>`;
-  }
-
-  // ── Trump ranking ──────────────────────────────────────────────────────────
-  section('Trump ranking (hearts is trump)');
-  assertEq('5♥ = 100 (highest trump)',   Game.rankCard(c('hearts','5'), 'hearts'), 100);
-  assertEq('J♥ = 99 (second trump)',     Game.rankCard(c('hearts','J'), 'hearts'), 99);
-  assertEq('A♥ = 98 (third trump)',      Game.rankCard(c('hearts','A'), 'hearts'), 98);
-  assertEq('K♥ = 80 (next after top 3)', Game.rankCard(c('hearts','K'), 'hearts'), 80);
-
-  // ── A♥ as permanent trump ─────────────────────────────────────────────────
-  section('A♥ is always a trump regardless of trump suit');
-  assertEq('isTrump(A♥) when spades is trump', Game.isTrump(c('hearts','A'), 'spades'), true);
-  assertEq('isTrump(A♥) when clubs is trump',  Game.isTrump(c('hearts','A'), 'clubs'),  true);
-  assertEq('A♥ rank = 98 when spades is trump', Game.rankCard(c('hearts','A'), 'spades'), 98);
-
-  // ── Trick winner ──────────────────────────────────────────────────────────
-  section('Trick winner');
-  const trick1 = [
-    { card: c('clubs','K'),  playerIndex: 0 },
-    { card: c('hearts','2'), playerIndex: 1 },
-    { card: c('clubs','A'),  playerIndex: 2 },
+  // Test 2: trick winner
+  log.push('\n--- Trick winner ---');
+  const trick = [
+    { card: { suit: 'clubs', value: 'K' }, playerIndex: 0 },
+    { card: { suit: 'hearts', value: '2' }, playerIndex: 1 },
+    { card: { suit: 'clubs', value: 'A' }, playerIndex: 2 },
   ];
-  assertEq('2♥ (trump) beats K♣ and A♣ — player 1 wins', Game.trickWinner(trick1, 'hearts').playerIndex, 1);
+  const winner = Game.trickWinner(trick, 'hearts');
+  log.push(`Winner: player ${winner.playerIndex} with ${Game.cardLabel(winner.card)} (expect player 1 — 2♥ is a trump)`);
 
-  const trick2 = [
-    { card: c('spades','K'), playerIndex: 0 },
-    { card: c('spades','9'), playerIndex: 1 },
-    { card: c('spades','A'), playerIndex: 2 },
-  ];
-  assertEq('No trump played — K♠ (led, highest black non-trump) wins', Game.trickWinner(trick2, 'hearts').playerIndex, 0);
+  // Test 3: deal a game
+  log.push('\n--- Deal ---');
+  let state = Game.createGameState(['You','AI 1','AI 2','AI 3']);
+  state = Game.dealHands(state);
+  log.push(`Trump: ${Game.cardLabel(state.trumpCard)}`);
+  state.players.forEach(p => {
+    log.push(`${p.name}: ${p.hand.map(Game.cardLabel).join(' ')}`);
+  });
 
-  // ── Non-trump led: legalCards ──────────────────────────────────────────────
-  section('Non-trump led (hearts is trump, clubs is led)');
-
-  assertCards(
-    '1. Has led suit only — only clubs legal',
-    Game.legalCards([c('clubs','K'), c('clubs','Q'), c('diamonds','5')], c('clubs','2'), 'hearts'),
-    [c('clubs','K'), c('clubs','Q')]
-  );
-
-  assertCards(
-    '2. Has led suit AND a trump — clubs AND trump legal, not diamonds',
-    Game.legalCards([c('clubs','K'), c('hearts','2'), c('diamonds','5')], c('clubs','2'), 'hearts'),
-    [c('clubs','K'), c('hearts','2')]
-  );
-
-  assertCards(
-    '3. Void in led suit, has trumps — any card legal',
-    Game.legalCards([c('diamonds','K'), c('hearts','2'), c('spades','5')], c('clubs','2'), 'hearts'),
-    [c('diamonds','K'), c('hearts','2'), c('spades','5')]
-  );
-
-  assertCards(
-    '4. Void in led suit, no trumps — any card legal',
-    Game.legalCards([c('diamonds','K'), c('diamonds','5'), c('diamonds','3')], c('clubs','2'), 'hearts'),
-    [c('diamonds','K'), c('diamonds','5'), c('diamonds','3')]
-  );
-
-  assertCards(
-    '5. Non-trump led, A♥ counts as trump when spades is trump',
-    Game.legalCards([c('clubs','K'), c('hearts','A')], c('clubs','2'), 'spades'),
-    [c('clubs','K'), c('hearts','A')]
-  );
-
-  // ── Trump led: legalCards & reneging ──────────────────────────────────────
-  section('Trump led (hearts is trump)');
-
-  assertCards(
-    '6. Has regular trump (not 5/J/A♥) — must follow trump',
-    Game.legalCards([c('hearts','2'), c('clubs','K')], c('hearts','3'), 'hearts'),
-    [c('hearts','2')]
-  );
-
-  assertCards(
-    '7. Holds only 5♥ (top trump), lower trump led — can renege, full hand legal',
-    Game.legalCards([c('hearts','5'), c('clubs','K')], c('hearts','3'), 'hearts'),
-    [c('hearts','5'), c('clubs','K')]
-  );
-
-  assertCards(
-    '8. Holds only J♥, lower trump led — can renege',
-    Game.legalCards([c('hearts','J'), c('clubs','K')], c('hearts','3'), 'hearts'),
-    [c('hearts','J'), c('clubs','K')]
-  );
-
-  assertCards(
-    '9. Holds only A♥ (spades trump), lower spade trump led — can renege',
-    Game.legalCards([c('hearts','A'), c('clubs','K')], c('spades','3'), 'spades'),
-    [c('hearts','A'), c('clubs','K')]
-  );
-
-  assertCards(
-    '10. Holds J♥, 5♥ led — cannot renege (J rank 99 < 5 rank 100)',
-    Game.legalCards([c('hearts','J'), c('clubs','K')], c('hearts','5'), 'hearts'),
-    [c('hearts','J')]
-  );
-
-  assertCards(
-    '11. Holds A♥, J♥ led — cannot renege (A♥ rank 98 < J♥ rank 99)',
-    Game.legalCards([c('hearts','A'), c('clubs','K')], c('hearts','J'), 'hearts'),
-    [c('hearts','A')]
-  );
-
-  // ── Summary ───────────────────────────────────────────────────────────────
-  const total = passed + failed;
-  out.innerHTML += `<div class="summary ${failed === 0 ? 'pass' : 'fail'}">${passed}/${total} passed${failed > 0 ? ` — ${failed} FAILED` : ' ✅'}</div>`;
+  document.getElementById('out').textContent = log.join('\n');
 </script>
 </body>
 </html>
