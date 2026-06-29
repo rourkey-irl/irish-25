@@ -175,8 +175,8 @@ function handleScoring() {
 }
 
 function handleGameOver() {
-  setMessage(`🏆 ${state.winner} wins the game with 25 points!`);
   renderAll();
+  setMessage(`🏆 ${state.winner} wins the game with 25 points!`);
   document.getElementById('btn-start').textContent = 'Play again';
 }
 
