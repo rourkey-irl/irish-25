@@ -188,7 +188,6 @@ function createGameState(playerNames) {
     currentPlayer: 0,
     dealer: 0,
     phase: 'dealing', // dealing → robbing → playing → scoring → gameover
-    pool: 0,
     round: 1,
   };
 }
@@ -203,8 +202,6 @@ function dealHands(state) {
   // Turn up trump card
   state.trumpCard = state.deck.splice(0, 1)[0];
   state.trumpSuit = state.trumpCard.suit;
-  // Add antes to pool
-  state.pool += state.players.length;
   // First player left of dealer leads
   state.currentPlayer = (state.dealer + 1) % state.players.length;
   state.currentTrick = [];
@@ -254,55 +251,26 @@ function playCard(state, playerIndex, card) {
 function resolveTrick(state) {
   const winner = trickWinner(state.currentTrick, state.trumpSuit);
   state.players[winner.playerIndex].tricksWon++;
+  state.players[winner.playerIndex].score += 5;
+
   state.trickHistory.push({
     trick: [...state.currentTrick],
     winner: winner.playerIndex
   });
   state.currentTrick = [];
 
-  // Check if all tricks played
-  const totalTricks = state.trickHistory.length;
-  if (totalTricks === 5) {
-    return scoreRound(state);
+  if (state.players[winner.playerIndex].score >= 25) {
+    state.phase = 'gameover';
+    state.winner = state.players[winner.playerIndex].name;
+    return state;
+  }
+
+  if (state.trickHistory.length === 5) {
+    state.phase = 'scoring';
+    return state;
   }
 
   state.currentPlayer = winner.playerIndex;
-  return state;
-}
-
-function scoreRound(state) {
-  state.phase = 'scoring';
-  let poolWinner = -1;
-
-  for (let i = 0; i < state.players.length; i++) {
-    const tricks = state.players[i].tricksWon;
-    state.players[i].score += tricks * 5;
-
-    if (tricks >= 3) {
-      poolWinner = i;
-    }
-  }
-
-  if (poolWinner >= 0) {
-    // Winner takes the pool
-    state.players[poolWinner].score += state.pool;
-    state.pool = 0;
-    // Bonus for winning all 5 tricks
-    if (state.players[poolWinner].tricksWon === 5) {
-      for (let i = 0; i < state.players.length; i++) {
-        if (i !== poolWinner) state.players[poolWinner].score++;
-      }
-    }
-  }
-  // else pool carries forward (spoil five)
-
-  // Check for game over (someone reached 25)
-  const winner = state.players.find(p => p.score >= 25);
-  if (winner) {
-    state.phase = 'gameover';
-    state.winner = winner.name;
-  }
-
   return state;
 }
 
