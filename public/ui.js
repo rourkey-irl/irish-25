@@ -191,7 +191,12 @@ function renderAll() {
   renderPool();
 
   const isMyTurn = state.phase === 'playing' && state.currentPlayer === 0;
-  setMessage(isMyTurn ? "Your turn — choose a card to play." : "");
+  document.getElementById('player-area').classList.toggle('your-turn', isMyTurn);
+  setMessage(isMyTurn
+    ? "Your turn — choose a card to play."
+    : state.phase === 'playing'
+      ? `${state.players[state.currentPlayer].name} is playing...`
+      : "");
 }
 
 function renderOpponents() {
@@ -257,8 +262,9 @@ function renderHand(robMode) {
     const isLegal = legal.some(c => c.value === card.value && c.suit === card.suit);
     const clickable = robMode ? true : (isMyTurn && isLegal);
     const disabled = isMyTurn && !isLegal;
+    const highlight = !robMode && isMyTurn && isLegal;
     const isTrump = Game.isTrump(card, state.trumpSuit);
-    return cardHTML(card, disabled, isTrump, false, null, clickable);
+    return cardHTML(card, disabled, isTrump, false, null, clickable, highlight);
   }).join('');
 
   // Attach click listeners properly after rendering
@@ -273,13 +279,21 @@ function renderHand(robMode) {
     });
   });
 
+  // Hover explanation for illegal cards
+  if (isMyTurn) {
+    area.querySelectorAll('.card.disabled').forEach(el => {
+      el.addEventListener('mouseenter', () => setMessage("You must follow suit — only the glowing cards can be played."));
+      el.addEventListener('mouseleave', () => setMessage("Your turn — choose a card to play."));
+    });
+  }
+
   document.getElementById('player-tricks-display').textContent =
     `Tricks: ${state.players[0].tricksWon}`;
   document.getElementById('player-score-display').textContent =
     `Score: ${state.players[0].score}`;
 }
 
-function cardHTML(card, disabled, isTrump, isWinner, playerName, clickable) {
+function cardHTML(card, disabled, isTrump, isWinner, playerName, clickable, highlight) {
   const red = isRed(card.suit);
   const sym = suitSymbol(card.suit);
   const classes = [
@@ -289,6 +303,7 @@ function cardHTML(card, disabled, isTrump, isWinner, playerName, clickable) {
     isTrump ? 'trump-card' : '',
     playerName ? 'card-in-trick' : '',
     isWinner ? 'trick-winner-card' : '',
+    highlight ? 'legal-card' : '',
   ].filter(Boolean).join(' ');
 
   const nameTag = playerName

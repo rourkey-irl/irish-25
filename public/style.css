@@ -116,7 +116,15 @@ tr:last-child td { border-bottom: none; }
   display: none;
 }
 .opponent-seat.active { display: block; }
-.opponent-seat.current-turn { outline: 2px solid #ffd700; }
+@keyframes turn-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(255, 215, 0, 0); }
+}
+.opponent-seat.current-turn {
+  outline: 2px solid #ffd700;
+  background: rgba(255, 215, 0, 0.08);
+  animation: turn-pulse 1.2s ease-out infinite;
+}
 
 .opp-name { font-weight: 600; margin-bottom: 4px; }
 .opp-cards { display: flex; gap: 3px; justify-content: center; margin-bottom: 4px; }
@@ -244,6 +252,12 @@ tr:last-child td { border-bottom: none; }
 }
 .card.trump-card {
   outline: 2px solid #ffd700;
+}
+.card.legal-card {
+  box-shadow: 0 0 8px #4ade80;
+}
+#player-area.your-turn {
+  box-shadow: 0 0 0 2px #4ade80;
 }
 .card .card-value {
   font-size: 1.1rem;
