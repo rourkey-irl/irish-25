@@ -155,9 +155,9 @@ function legalCards(hand, ledCard, trumpSuit) {
 
     // Check if ALL trumps in hand are renegeable
     const mustPlay = trumpsInHand.filter(c => !canRenege(c, ledCard, trumpSuit));
-    if (mustPlay.length > 0) return mustPlay; // must play one of these
+    if (mustPlay.length > 0) return trumpsInHand; // must follow trump; any trump is valid
 
-    // All trumps are top trumps higher than led — can renege
+    // All trumps are renegeable — may play anything
     return hand;
   } else {
     // Non-trump led — may follow suit or trump; discard only if void in both
