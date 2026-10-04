@@ -206,10 +206,8 @@ function renderOpponents() {
 
 function renderTrump() {
   if (!state) return;
-  const sym = suitSymbol(state.trumpSuit);
-  const col = isRed(state.trumpSuit) ? '♥♦' : '♣♠';
   document.getElementById('trump-display').textContent =
-    `Trump: ${Game.cardLabel(state.trumpCard)} ${sym}`;
+    `Trump: ${Game.cardLabel(state.trumpCard)}`;
   document.getElementById('round-display').textContent = `Round ${state.round}`;
 }
 
