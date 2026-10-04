@@ -212,8 +212,13 @@ function dealHands(state) {
   return state;
 }
 
-// Check if any player holds the ace of trumps and can rob
+// Check who can rob the pack. Normally this is whichever player holds the
+// ace of trumps. But if the turned-up trump card is itself the ace
+// ("ace to the face"), nobody holds it — the dealer robs it instead.
 function whoCanRob(state) {
+  if (state.trumpCard.value === 'A') {
+    return state.dealer;
+  }
   return state.players.findIndex(p =>
     p.hand.some(c => c.value === 'A' && c.suit === state.trumpSuit)
   );

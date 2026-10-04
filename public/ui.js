@@ -40,14 +40,20 @@ function checkRobbing() {
 
   renderAll();
 
+  const aceToFace = state.trumpCard.value === 'A';
+
   if (robberIndex === 0) {
     // Human can rob
-    setMessage(`You hold the A${suitSymbol(state.trumpSuit)} — you may rob the pack!`);
+    setMessage(aceToFace
+      ? `Ace to the face! As dealer, you may rob it.`
+      : `You hold the A${suitSymbol(state.trumpSuit)} — you may rob the pack!`);
     document.getElementById('btn-rob').style.display = 'inline-block';
     document.getElementById('btn-skip-rob').style.display = 'inline-block';
   } else {
     // AI robs automatically
-    setMessage(`${state.players[robberIndex].name} robs the pack!`);
+    setMessage(aceToFace
+      ? `Ace to the face! ${state.players[robberIndex].name} robs it as dealer.`
+      : `${state.players[robberIndex].name} robs the pack!`);
     const ai = state.players[robberIndex];
     // AI discards its lowest ranked card
     const sorted = [...ai.hand].sort(
