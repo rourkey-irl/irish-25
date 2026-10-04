@@ -2,6 +2,7 @@ let state = null;
 let currentUser = null;
 const AI_DELAY = 900; // ms between AI plays
 let trumpPopupTimer = null;
+let hintVisible = false;
 
 // ── Boot ──────────────────────────────────────────────────
 
@@ -273,6 +274,65 @@ function renderHand(robMode) {
     `Tricks: ${state.players[0].tricksWon}`;
   document.getElementById('player-score-display').textContent =
     `Score: ${state.players[0].score}`;
+
+  renderHint();
+}
+
+function toggleHint() {
+  hintVisible = !hintVisible;
+  renderHint();
+}
+
+function renderHint() {
+  const btn = document.getElementById('btn-hint');
+  const panel = document.getElementById('hint-panel');
+  const isMyTurn = !!state && state.phase === 'playing' && state.currentPlayer === 0;
+
+  btn.style.display = isMyTurn ? 'inline-block' : 'none';
+  btn.textContent = hintVisible ? 'Hide hint' : 'Hint';
+
+  if (!isMyTurn || !hintVisible) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  const hand = state.players[0].hand;
+  const ledCard = state.currentTrick.length > 0 ? state.currentTrick[0].card : null;
+  const legal = Game.legalCards(hand, ledCard, state.trumpSuit);
+  panel.textContent = explainLegalPlay(hand, ledCard, state.trumpSuit, legal);
+  panel.style.display = 'block';
+}
+
+function explainLegalPlay(hand, ledCard, trumpSuit, legal) {
+  const legalLabels = legal.map(Game.cardLabel).join(', ');
+
+  if (!ledCard) {
+    return `You're leading this trick — any card is legal. Legal cards: ${legalLabels}.`;
+  }
+
+  const ledIsTrump = Game.isTrump(ledCard, trumpSuit);
+  let reason;
+
+  if (ledIsTrump) {
+    const trumpsInHand = hand.filter(c => Game.isTrump(c, trumpSuit));
+    const playAnything = legal.length === hand.length;
+    if (trumpsInHand.length === 0) {
+      reason = `A trump was led (${Game.cardLabel(ledCard)}) and you hold none, so you're free to play anything.`;
+    } else if (playAnything) {
+      reason = `A trump was led (${Game.cardLabel(ledCard)}). Your only trumps are top trumps (5, J, or A♥) that already beat it, so you may renege — play any card, or still play a trump if you'd rather.`;
+    } else {
+      reason = `A trump was led (${Game.cardLabel(ledCard)}) — you must play a trump. Any trump in your hand is legal.`;
+    }
+  } else {
+    const suitInHand = hand.filter(c => c.suit === ledCard.suit && !Game.isTrump(c, trumpSuit));
+    if (suitInHand.length === 0) {
+      reason = `${capitalize(ledCard.suit)} was led and you have none — you're free to play anything, including a trump.`;
+    } else {
+      reason = `${capitalize(ledCard.suit)} was led — play a card of that suit, or trump in instead.`;
+    }
+  }
+
+  return `${reason} Legal cards: ${legalLabels}.`;
 }
 
 function cardHTML(card, disabled, isTrump, isWinner, playerName, clickable, highlight) {
@@ -324,7 +384,7 @@ function showTrumpPopup() {
   document.getElementById('trump-popup-sym').textContent = suitSymbol(card.suit);
   document.getElementById('trump-popup-face').classList.toggle('red', red);
   document.getElementById('trump-popup-suitname').textContent =
-    `${card.suit.charAt(0).toUpperCase()}${card.suit.slice(1)} are trumps this round`;
+    `${capitalize(card.suit)} are trumps this round`;
 
   document.getElementById('trump-popup').style.display = 'flex';
   clearTimeout(trumpPopupTimer);
@@ -342,6 +402,10 @@ function suitSymbol(suit) {
 
 function isRed(suit) {
   return suit === 'hearts' || suit === 'diamonds';
+}
+
+function capitalize(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 function setMessage(msg) {
