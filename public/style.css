@@ -86,7 +86,9 @@ tr:last-child td { border-bottom: none; }
 #game-info { display: flex; gap: 16px; font-size: 0.85rem; color: #ccc; }
 #trump-display { color: #ffd700; font-weight: 600; }
 
-#logout-btn {
+#topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+#logout-btn, #rules-btn {
   width: auto;
   padding: 6px 14px;
   font-size: 0.85rem;
@@ -96,7 +98,8 @@ tr:last-child td { border-bottom: none; }
   color: #fff;
   cursor: pointer;
 }
-#logout-btn:hover { background: rgba(255,255,255,0.2); }
+#logout-btn:hover, #rules-btn:hover { background: rgba(255,255,255,0.2); }
+#rules-btn { text-decoration: none; display: inline-block; }
 
 /* ── Opponents ── */
 #opponents {

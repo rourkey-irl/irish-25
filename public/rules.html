@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Irish 25 — Rules</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      display: block;
+      align-items: unset;
+      justify-content: unset;
+      padding: 2rem 1rem 4rem;
+    }
+    .rules-wrap { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+    .rules-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #ccc;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+    .rules-back:hover { color: #fff; }
+
+    .rules-hero { text-align: center; margin-bottom: 8px; }
+    .rules-hero .eyebrow {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: #ffd700; margin-bottom: 8px;
+    }
+    .rules-hero h1 { font-size: 2.1rem; margin-bottom: 6px; }
+    .rules-hero p { color: #ccc; max-width: 46ch; margin: 0 auto; }
+
+    .rules-card {
+      background: rgba(0,0,0,0.4);
+      border-radius: 16px;
+      padding: 1.75rem;
+    }
+    .rules-card .kicker {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #ffd700; margin-bottom: 6px;
+    }
+    .rules-card h2 { font-size: 1.3rem; margin-bottom: 10px; color: #fff; }
+    .rules-card p { color: #ddd; margin-bottom: 12px; line-height: 1.55; }
+    .rules-card p:last-child { margin-bottom: 0; }
+    .rules-card ul { color: #ddd; margin: 0 0 12px; padding-left: 1.2em; line-height: 1.55; }
+    .rules-card li { margin-bottom: 6px; }
+    .rules-card.accent { outline: 1px solid rgba(255,215,0,0.4); }
+
+    .chip {
+      display: inline-flex; align-items: baseline; gap: 1px;
+      min-width: 34px; padding: 5px 7px; border-radius: 6px;
+      background: #fff; color: #111; font-weight: 700; font-size: 0.88rem;
+      border: 1px solid #0003;
+    }
+    .chip.top { outline: 2px solid #ffd700; }
+    .chip .suit.red { color: #cc0000; }
+
+    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; margin: 10px 0 14px; }
+
+    .rank-ladder { display: flex; flex-direction: column; gap: 6px; margin: 12px 0 16px; }
+    .rank-row {
+      display: grid; grid-template-columns: 30px auto 1fr; align-items: center;
+      gap: 10px; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,0.05);
+    }
+    .rank-row.top { background: rgba(255,215,0,0.1); }
+    .rank-row .pos { font-size: 0.75rem; color: #999; text-align: right; }
+    .rank-row .note { font-size: 0.85rem; color: #ccc; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0 16px; }
+    @media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
+    .col-head { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+    .col-head.red { color: #e04b4b; }
+    .col-head.blk { color: #bbb; }
+    .small-note { font-size: 0.82rem; color: #aaa; margin: 0; }
+
+    .pill {
+      display: inline-block; padding: 6px 12px; border-radius: 999px;
+      background: #2d6a3f; color: #fff; font-size: 0.82rem; font-weight: 600;
+    }
+
+    .flow { display: flex; flex-direction: column; gap: 2px; margin: 14px 0 4px; }
+    .flow-step { border: 1px solid #ffffff22; border-radius: 10px; padding: 12px 14px; background: rgba(255,255,255,0.04); }
+    .flow-q { font-weight: 700; margin-bottom: 8px; font-size: 0.92rem; }
+    .flow-branches { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media (max-width: 560px) { .flow-branches { grid-template-columns: 1fr; } }
+    .branch { border-radius: 8px; padding: 9px 10px; background: rgba(0,0,0,0.25); border: 1px dashed #ffffff22; }
+    .branch .cond { font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
+    .flow-arrow { text-align: center; color: #888; font-size: 0.9rem; padding: 2px 0; }
+
+    .swap { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 14px 0; flex-wrap: wrap; }
+    .swap .unit { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .swap .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: #999; }
+    .swap .sep { font-size: 1.3rem; color: #ffd700; }
+
+    .glossary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; }
+    @media (max-width: 560px) { .glossary { grid-template-columns: 1fr; } }
+    .term dt { font-weight: 700; font-size: 0.95rem; color: #fff; }
+    .term dd { margin: 2px 0 0; color: #bbb; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="rules-wrap">
+    <a href="#" id="back-link" class="rules-back">&larr; Back</a>
+
+    <header class="rules-hero">
+      <p class="eyebrow">How to Play</p>
+      <h1>Irish 25</h1>
+      <p>Five cards each, one suit rules them all, and the first player to <strong>25 points</strong> wins — sometimes mid-trick.</p>
+    </header>
+
+    <section class="rules-card">
+      <p class="kicker">Setup</p>
+      <h2>Five cards, one flip</h2>
+      <p>You play against up to five AI opponents. Everyone is dealt <strong>5 cards</strong> from a standard 52-card deck — the rest of the deck sits aside, except for one card turned face-up.</p>
+      <p>The suit of that turned-up card is <strong>trumps</strong> for the round. It outranks every other suit, no matter what's led. The player to the dealer's left leads the first trick.</p>
+    </section>
+
+    <section class="rules-card">
+      <p class="kicker">The Trump Suit</p>
+      <h2>Not A&ndash;K. A special ladder.</h2>
+      <p>Trumps don't rank the way you'd expect. Three cards always sit at the very top, regardless of suit — then the rest fall in by colour.</p>
+
+      <div class="rank-ladder">
+        <div class="rank-row top">
+          <span class="pos">1st</span>
+          <span class="chip top">5 <span class="suit red">&hearts;</span></span>
+          <span class="note">The <strong>5 of trumps</strong> — the single highest card in the game.</span>
+        </div>
+        <div class="rank-row top">
+          <span class="pos">2nd</span>
+          <span class="chip top">J <span class="suit red">&hearts;</span></span>
+          <span class="note">The <strong>Jack of trumps</strong>.</span>
+        </div>
+        <div class="rank-row top">
+          <span class="pos">3rd</span>
+          <span class="chip top">A <span class="suit red">&hearts;</span></span>
+          <span class="note">The <strong>Ace of Hearts</strong> — always a trump, even when hearts isn't the trump suit.</span>
+        </div>
+        <div class="rank-row">
+          <span class="pos">4th</span>
+          <span class="chip">A <span class="suit red">&hearts;</span></span>
+          <span class="note">The <strong>Ace of the trump suit</strong> (only a separate card when trumps aren't hearts).</span>
+        </div>
+      </div>
+
+      <p>Then the remaining trumps follow colour order — red and black suits run in opposite directions:</p>
+
+      <div class="two-col">
+        <div>
+          <p class="col-head red">Red trumps (&hearts; &diams;)</p>
+          <div class="chip-row">
+            <span class="chip">K</span><span class="chip">Q</span><span class="chip">10</span><span class="chip">9</span><span class="chip">8</span><span class="chip">7</span><span class="chip">6</span><span class="chip">4</span><span class="chip">3</span><span class="chip">2</span>
+          </div>
+        </div>
+        <div>
+          <p class="col-head blk">Black trumps (&clubs; &spades;)</p>
+          <div class="chip-row">
+            <span class="chip">K</span><span class="chip">Q</span><span class="chip">2</span><span class="chip">3</span><span class="chip">4</span><span class="chip">6</span><span class="chip">7</span><span class="chip">8</span><span class="chip">9</span><span class="chip">10</span>
+          </div>
+        </div>
+      </div>
+      <p class="small-note">Each row reads highest &rarr; lowest. (The 5, J and A are already placed above, so they don't repeat here.)</p>
+    </section>
+
+    <section class="rules-card">
+      <p class="kicker">Non-Trump Suits</p>
+      <h2>The Ace is in two different places</h2>
+      <p>When a suit <em>isn't</em> trumps, red and black suits rank differently from each other — and from what you might expect.</p>
+      <div class="two-col">
+        <div>
+          <p class="col-head red">Red (&hearts; &diams;), not trump</p>
+          <div class="chip-row">
+            <span class="chip">K</span><span class="chip">Q</span><span class="chip">J</span><span class="chip">10</span><span class="chip">9</span><span class="chip">8</span><span class="chip">7</span><span class="chip">6</span><span class="chip">5</span><span class="chip">4</span><span class="chip">3</span><span class="chip">2</span><span class="chip">A</span>
+          </div>
+          <p class="small-note">The Ace is the <strong>weakest</strong> card.</p>
+        </div>
+        <div>
+          <p class="col-head blk">Black (&clubs; &spades;), not trump</p>
+          <div class="chip-row">
+            <span class="chip">K</span><span class="chip">Q</span><span class="chip">J</span><span class="chip">A</span><span class="chip">2</span><span class="chip">3</span><span class="chip">4</span><span class="chip">5</span><span class="chip">6</span><span class="chip">7</span><span class="chip">8</span><span class="chip">9</span><span class="chip">10</span>
+          </div>
+          <p class="small-note">The Ace sits just under the Jack — stronger than 2&ndash;10.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="rules-card">
+      <p class="kicker">Playing a Trick</p>
+      <h2>What can you play?</h2>
+      <div class="flow">
+        <div class="flow-step">
+          <p class="flow-q">Are you leading the trick?</p>
+          <span class="pill">Yes &rarr; play any card</span>
+        </div>
+        <div class="flow-arrow">&darr; otherwise</div>
+        <div class="flow-step">
+          <p class="flow-q">Was a non-trump suit led?</p>
+          <div class="flow-branches">
+            <div class="branch">
+              <p class="cond">You hold that suit</p>
+              <span class="pill">Play that suit — or a trump</span>
+            </div>
+            <div class="branch">
+              <p class="cond">You hold none of it</p>
+              <span class="pill">Play anything</span>
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">&darr; otherwise, a trump was led</div>
+        <div class="flow-step">
+          <p class="flow-q">Do you hold a trump?</p>
+          <div class="flow-branches">
+            <div class="branch">
+              <p class="cond">No trumps in hand</p>
+              <span class="pill">Play anything</span>
+            </div>
+            <div class="branch">
+              <p class="cond">You hold one or more</p>
+              <span class="pill">Must play a trump — unless you can renege &darr;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rules-card accent">
+      <p class="kicker">The Special Rule</p>
+      <h2>Reneging</h2>
+      <p>Normally, if a trump is led and you hold one, you must play it. But the three untouchable top trumps come with a privilege: you may <strong>refuse to play them</strong> &mdash; "renege" &mdash; and throw a different card instead.</p>
+      <div class="chip-row">
+        <span class="chip top">5 <span class="suit red">&hearts;</span></span>
+        <span class="chip top">J <span class="suit red">&hearts;</span></span>
+        <span class="chip top">A <span class="suit red">&hearts;</span></span>
+        <span class="small-note" style="align-self:center;">&mdash; the only cards that can renege</span>
+      </div>
+      <p>Two conditions have to hold at once:</p>
+      <ul>
+        <li><strong>Every</strong> trump in your hand is one of those three cards (no ordinary trump hiding alongside them), and</li>
+        <li>each one you hold already outranks the card that was led.</li>
+      </ul>
+      <p>If either condition fails — say you also hold a plain trump — you must play a trump as usual (any trump you hold is legal, including a top one if you choose).</p>
+      <p class="small-note"><em>Example:</em> Diamonds are trumps. Someone leads the 9&diams;. If your only trump is the A&hearts;, you may renege — the ace already beats a 9, so you're allowed to save it. But if you also held the 7&diams;, you'd have to play a trump.</p>
+    </section>
+
+    <section class="rules-card accent">
+      <p class="kicker">Before Play Begins</p>
+      <h2>Robbing the Pack</h2>
+      <p>Whoever holds the <strong>Ace of the trump suit</strong> may "rob": trade it for the turned-up trump card, discarding one card from hand to make room. This can only happen once, before the first trick is played.</p>
+      <div class="swap">
+        <div class="unit">
+          <span class="chip">A <span class="suit red">&diams;</span></span>
+          <span class="label">In your hand</span>
+        </div>
+        <span class="sep">&hArr;</span>
+        <div class="unit">
+          <span class="chip">9 <span class="suit red">&diams;</span></span>
+          <span class="label">Turned up card</span>
+        </div>
+      </div>
+      <p class="small-note">You end up holding the (usually stronger) turned-up trump instead of your ace, having discarded a card you no longer need.</p>
+
+      <div class="rank-row top" style="margin-top:16px; grid-template-columns: auto 1fr;">
+        <span class="chip top">A <span class="suit red">&diams;</span></span>
+        <span class="note"><strong>Ace to the face</strong> &mdash; if the turned-up card itself is the Ace of trumps, nobody holds it in hand. The <strong>dealer</strong> robs it instead, trading it in for a discard exactly as above.</span>
+      </div>
+    </section>
+
+    <section class="rules-card">
+      <p class="kicker">Scoring &amp; Winning</p>
+      <h2>Race to 25</h2>
+      <ul>
+        <li>Each trick is worth <strong>5 points</strong>, awarded the instant it's won.</li>
+        <li>The winner of a trick leads the next one.</li>
+        <li>The moment any player reaches <strong>25 points</strong>, the game ends — even if it's only the second trick of the round.</li>
+        <li>If nobody has reached 25 after all 5 tricks, a new round is dealt and trumps are set again.</li>
+      </ul>
+    </section>
+
+    <section class="rules-card">
+      <p class="kicker">Quick Reference</p>
+      <h2>Glossary</h2>
+      <dl class="glossary">
+        <div class="term"><dt>Trick</dt><dd>One card from each player; highest wins and takes 5 points.</dd></div>
+        <div class="term"><dt>Trump</dt><dd>The suit set by the turned-up card; beats every other suit.</dd></div>
+        <div class="term"><dt>Lead</dt><dd>The first card played to a trick; sets the suit others must follow.</dd></div>
+        <div class="term"><dt>Follow suit</dt><dd>Play the same suit that was led, if you can.</dd></div>
+        <div class="term"><dt>Renege</dt><dd>Legally withhold the 5, J, or A&hearts; from a trump lead it would've beaten.</dd></div>
+        <div class="term"><dt>Rob</dt><dd>Swap your Ace of trumps for the turned-up trump card before play starts.</dd></div>
+      </dl>
+    </section>
+  </div>
+
+  <script>
+    fetch('/api/me').then(r => r.json()).then(data => {
+      const back = document.getElementById('back-link');
+      if (data.user) {
+        back.textContent = '← Back to game';
+        back.href = 'game.html';
+      } else {
+        back.textContent = '← Back to login';
+        back.href = 'index.html';
+      }
+    }).catch(() => {
+      document.getElementById('back-link').href = 'index.html';
+    });
+  </script>
+</body>
+</html>
