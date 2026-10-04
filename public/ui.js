@@ -138,7 +138,7 @@ function handleAfterPlay() {
       if (state.phase === 'scoring') { handleScoring(); return; }
       renderAll();
       if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
-    }, 1500);
+    }, 2000);
     return;
   }
   if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
