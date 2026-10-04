@@ -160,7 +160,7 @@ function handleGameOver() {
   fetch('/api/result', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ result: humanWon ? 'win' : 'loss', tricks: state.players[0].tricksWon })
+    body: JSON.stringify({ result: humanWon ? 'win' : 'loss', tricks: state.players[0].totalTricksWon })
   });
 }
 

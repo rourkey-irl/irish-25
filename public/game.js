@@ -181,6 +181,7 @@ function createGameState(playerNames) {
       isHuman: i === 0,
       hand: [],
       tricksWon: 0,
+      totalTricksWon: 0,
       score: 0,
     })),
     deck: [],
@@ -259,6 +260,7 @@ function playCard(state, playerIndex, card) {
 function resolveTrick(state) {
   const winner = trickWinner(state.currentTrick, state.trumpSuit);
   state.players[winner.playerIndex].tricksWon++;
+  state.players[winner.playerIndex].totalTricksWon++;
   state.players[winner.playerIndex].score += 5;
 
   state.trickHistory.push({
