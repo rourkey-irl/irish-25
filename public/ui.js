@@ -131,16 +131,25 @@ function handleAfterPlay() {
     const winnerName = state.players[last.winner].name;
     const winningEntry = last.trick.find(t => t.playerIndex === last.winner);
     const winningCard = Game.cardLabel(winningEntry.card);
-    setMessage(`${winnerName} wins with ${winningCard}!`);
+    const reason = explainTrickWin(last.trick, state.trumpSuit, winningEntry);
+    setMessage(`${winnerName} wins with ${winningCard} — ${reason}.`);
     setTimeout(() => {
       if (state.phase === 'gameover') { handleGameOver(); return; }
       if (state.phase === 'scoring') { handleScoring(); return; }
       renderAll();
       if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
-    }, 1000);
+    }, 1500);
     return;
   }
   if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
+}
+
+function explainTrickWin(trick, trumpSuit, winningEntry) {
+  if (Game.isTrump(winningEntry.card, trumpSuit)) {
+    const trumpsPlayed = trick.filter(t => Game.isTrump(t.card, trumpSuit));
+    return trumpsPlayed.length > 1 ? 'highest trump in the trick' : 'the only trump played';
+  }
+  return 'highest card of the suit led';
 }
 
 function handleScoring() {
@@ -199,7 +208,7 @@ function renderOpponents() {
       <div class="opp-cards">
         ${player.hand.map(() => '<div class="opp-card-back"></div>').join('')}
       </div>
-      <div class="opp-tricks">Tricks: ${player.tricksWon}</div>
+      <div class="opp-tricks">Tricks: ${player.totalTricksWon}</div>
       <div class="opp-score">Score: ${player.score}</div>
     `;
   }
@@ -271,7 +280,7 @@ function renderHand(robMode) {
   }
 
   document.getElementById('player-tricks-display').textContent =
-    `Tricks: ${state.players[0].tricksWon}`;
+    `Tricks: ${state.players[0].totalTricksWon}`;
   document.getElementById('player-score-display').textContent =
     `Score: ${state.players[0].score}`;
 
