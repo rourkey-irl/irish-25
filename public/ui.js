@@ -1,6 +1,7 @@
 let state = null;
 let currentUser = null;
 const AI_DELAY = 900; // ms between AI plays
+let trumpPopupTimer = null;
 
 // ── Boot ──────────────────────────────────────────────────
 
@@ -29,12 +30,17 @@ function startGame() {
   checkRobbing();
 }
 
+function beginPlay() {
+  state.phase = 'playing';
+  renderAll();
+  showTrumpPopup();
+  if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
+}
+
 function checkRobbing() {
   const robberIndex = Game.whoCanRob(state);
   if (robberIndex === -1) {
-    state.phase = 'playing';
-    renderAll();
-    if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
+    beginPlay();
     return;
   }
 
@@ -60,11 +66,7 @@ function checkRobbing() {
       (a, b) => Game.rankCard(a, state.trumpSuit) - Game.rankCard(b, state.trumpSuit)
     );
     state = Game.robPack(state, robberIndex, sorted[0]);
-    setTimeout(() => {
-      state.phase = 'playing';
-      renderAll();
-      if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
-    }, 1000);
+    setTimeout(beginPlay, 1000);
   }
 }
 
@@ -78,16 +80,12 @@ function showRobUI() {
 function skipRob() {
   document.getElementById('btn-rob').style.display = 'none';
   document.getElementById('btn-skip-rob').style.display = 'none';
-  state.phase = 'playing';
-  renderAll();
-  if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
+  beginPlay();
 }
 
 function handleRobDiscard(card) {
   state = Game.robPack(state, 0, card);
-  state.phase = 'playing';
-  renderAll();
-  if (state.currentPlayer !== 0) setTimeout(aiTurn, AI_DELAY);
+  beginPlay();
 }
 
 function nextRound() {
@@ -320,6 +318,25 @@ function renderScores() {
 function renderPool() {}
 
 // ── Helpers ───────────────────────────────────────────────
+
+function showTrumpPopup() {
+  const card = state.trumpCard;
+  const red = isRed(card.suit);
+  document.getElementById('trump-popup-value').textContent = card.value;
+  document.getElementById('trump-popup-sym').textContent = suitSymbol(card.suit);
+  document.getElementById('trump-popup-face').classList.toggle('red', red);
+  document.getElementById('trump-popup-suitname').textContent =
+    `${card.suit.charAt(0).toUpperCase()}${card.suit.slice(1)} are trumps this round`;
+
+  document.getElementById('trump-popup').style.display = 'flex';
+  clearTimeout(trumpPopupTimer);
+  trumpPopupTimer = setTimeout(hideTrumpPopup, 3000);
+}
+
+function hideTrumpPopup() {
+  clearTimeout(trumpPopupTimer);
+  document.getElementById('trump-popup').style.display = 'none';
+}
 
 function suitSymbol(suit) {
   return { hearts: '♥', diamonds: '♦', clubs: '♣', spades: '♠' }[suit] || '';

@@ -292,6 +292,80 @@ tr:last-child td { border-bottom: none; }
 }
 .card-in-trick.trick-winner-card { outline: 2px solid #ffd700; }
 
+/* ── Trump reveal popup ── */
+.trump-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.55);
+  padding: 20px;
+}
+.trump-popup-card {
+  position: relative;
+  background: rgba(20,50,32,0.95);
+  border: 1px solid #ffd70066;
+  border-radius: 16px;
+  padding: 28px 32px;
+  text-align: center;
+  max-width: 280px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  animation: trump-pop-in 0.2s ease-out;
+}
+@keyframes trump-pop-in {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .trump-popup-card { animation: none; }
+}
+.trump-popup-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ffd700;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.trump-popup-face {
+  width: 92px;
+  height: 130px;
+  margin: 0 auto 14px;
+  background: #fff;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 3px #ffd700, 0 6px 16px rgba(0,0,0,0.4);
+  color: #111;
+}
+.trump-popup-face .tp-value { font-size: 2rem; font-weight: 700; line-height: 1; }
+.trump-popup-face .tp-suit { font-size: 2.4rem; line-height: 1; margin-top: 4px; }
+.trump-popup-face.red .tp-value, .trump-popup-face.red .tp-suit { color: #cc0000; }
+.trump-popup-suit {
+  color: #ccc;
+  font-size: 0.95rem;
+  margin: 0;
+}
+.trump-popup-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: auto;
+  padding: 2px 6px;
+  margin: 0;
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.trump-popup-close:hover { background: transparent; color: #fff; }
+
 /* ── Mobile (phones; tablets keep the desktop layout) ── */
 @media (max-width: 640px) {
   body { padding: 8px; }

@@ -61,6 +61,19 @@
 
   </div>
 
+  <!-- Trump reveal popup -->
+  <div id="trump-popup" class="trump-popup" style="display:none" onclick="if (event.target === this) hideTrumpPopup();">
+    <div class="trump-popup-card">
+      <button class="trump-popup-close" onclick="hideTrumpPopup()" aria-label="Dismiss">&times;</button>
+      <p class="trump-popup-label">Trumps this round</p>
+      <div id="trump-popup-face" class="trump-popup-face">
+        <div class="tp-value" id="trump-popup-value"></div>
+        <div class="tp-suit" id="trump-popup-sym"></div>
+      </div>
+      <p class="trump-popup-suit" id="trump-popup-suitname"></p>
+    </div>
+  </div>
+
   <script src="game.js"></script>
   <script src="ai.js"></script>
   <script src="ui.js"></script>
